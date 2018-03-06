@@ -9,20 +9,25 @@ import numpy as np
 ###
 data=pd.read_csv('data.csv', sep=',',verbose = False,float_precision=None,dtype = str)
 
-temp_coding = coding
+vendor = data['vendor_id']
+shipto_id = data['shipto_id']
+coding = data['charge_account_id']
+
 coding_dict = {}
+output_dict = {}
 coding_index = 0
-final_coding = temp_coding
-n = temp_coding.size
+final_coding = coding
+n = coding.size
 for i in range(n):
-  if temp_coding[i] in coding_dict:
-    final_coding[i] = coding_dict[temp_coding[i]]
+  if coding[i] in coding_dict:
+    final_coding[i] = coding_dict[coding[i]]
   else:
     coding_index = coding_index + 1
-    coding_dict[temp_coding[i]] = coding_index
-    final_coding[i] = coding_dict[temp_coding[i]]
-
-#print (final_coding)
+    coding_dict[coding[i]] = coding_index
+    output_dict[coding_index] = coding[i]
+    final_coding[i] = coding_dict[coding[i]]
+    
+print (final_coding)
 
 
 vendor_dict = {}
@@ -37,7 +42,7 @@ for i in range(n):
     vendor_dict[vendor[i]] = vendor_index
     final_vendor[i] = vendor_dict[vendor[i]]
 
-#print (final_vendor)
+print (final_vendor)
 
 shipto_dict = {}
 shipto_index = 0
@@ -51,7 +56,7 @@ for i in range(n):
     shipto_dict[shipto_id[i]] = shipto_index
     final_shipto[i] = shipto_dict[shipto_id[i]]
 
-#print (final_shipto)
+print (final_shipto)
 
 d1 = { 'vendor_id' : final_vendor, 'shipto_id' : final_shipto}
 features = pd.DataFrame(data=d1)
@@ -68,3 +73,26 @@ model = GaussianNB()
 model.fit(X_train, y_train)
 predictions = model.predict(X_test)
 accuracy_score(y_test, predictions)
+
+#int(predictions[0])
+testdata=pd.read_csv('testdata.csv', sep=',',verbose = False,float_precision=None,dtype = str)
+testvendor = testdata['vendor_id']
+testshipto_id = testdata['shipto_id']
+testvendor_final = testvendor
+n = testvendor.size
+for j in range(n):
+  testvendor_final[j] = vendor_dict[testvendor[j]]
+
+print (testvendor_final)
+
+n = testshipto_id.size
+testshipto_id_final = testshipto_id
+for j in range(n):
+  testshipto_id_final[j] = shipto_dict[testshipto_id[j]]
+
+print (testshipto_id_final)
+testd1 = { 'vendor_id' : testvendor_final, 'shipto_id' : testshipto_id_final}
+testfeatures = pd.DataFrame(data=testd1)
+
+for k in range(predictions2.size):
+  print("Predicted charge account for index: " + str(k+1) + " is: " + output_dict[int(predictions2[k])])

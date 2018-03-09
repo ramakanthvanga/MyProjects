@@ -17,6 +17,10 @@ coding_dict = {}
 output_dict = {}
 coding_index = 0
 final_coding = coding
+
+vendor_dict = {}
+vendor_index = 0
+final_vendor = vendor
 n = coding.size
 for i in range(n):
   if coding[i] in coding_dict:
@@ -27,12 +31,9 @@ for i in range(n):
     output_dict[coding_index] = coding[i]
     final_coding[i] = coding_dict[coding[i]]
     
-print (final_coding)
+#print (final_coding)
 
 
-vendor_dict = {}
-vendor_index = 0
-final_vendor = vendor
 n = vendor.size
 for i in range(n):
   if vendor[i] in vendor_dict:
@@ -42,7 +43,7 @@ for i in range(n):
     vendor_dict[vendor[i]] = vendor_index
     final_vendor[i] = vendor_dict[vendor[i]]
 
-print (final_vendor)
+#print (final_vendor)
 
 shipto_dict = {}
 shipto_index = 0
@@ -56,7 +57,7 @@ for i in range(n):
     shipto_dict[shipto_id[i]] = shipto_index
     final_shipto[i] = shipto_dict[shipto_id[i]]
 
-print (final_shipto)
+#print (final_shipto)
 
 d1 = { 'vendor_id' : final_vendor, 'shipto_id' : final_shipto}
 features = pd.DataFrame(data=d1)
@@ -93,6 +94,7 @@ for j in range(n):
 print (testshipto_id_final)
 testd1 = { 'vendor_id' : testvendor_final, 'shipto_id' : testshipto_id_final}
 testfeatures = pd.DataFrame(data=testd1)
-
+testfeatures = testfeatures.as_matrix().astype(np.float)
+predictions2 = model.predict(testfeatures)
 for k in range(predictions2.size):
   print("Predicted charge account for index: " + str(k+1) + " is: " + output_dict[int(predictions2[k])])

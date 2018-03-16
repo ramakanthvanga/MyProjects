@@ -28,7 +28,7 @@ class Features(Resource):
         vendor_id = args['vendor_id']
         print("entity id: " + str(args['entity_id']))
         print("header id: " + str(args['header_id']))
-        query = """select feature1, feature2, final_value from ml_auto_coding where entity_id="""+str(entity_id)+""" and vendor_id="""+"'"+str(vendor_id)+"'"
+        query = """select feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8, feature9, feature10, final_value from ml_auto_coding where entity_id="""+str(entity_id)+""" and vendor_id="""+"'"+str(vendor_id)+"'"
         print("query: " + query)
         #query = """select vendor_id as feature1, vendor_site_id as feature2, charge_account_id as final_value from inv_header h, inv_lines l where h.entity_id = l.entity_id
         #and h.header_id = l.inv_header_id and h.status in ('Imported to ERP', 'Fully Paid') and h.entity_id=2"""
@@ -65,7 +65,7 @@ class Features(Resource):
         predictions = model.predict(X_test)
         accuracy_score(y_test, predictions)
         
-        testquery = """select feature1, feature2 from ml_auto_coding where entity_id="""+str(entity_id)+""" and header_id="""+"'"+str(header_id)+"'"
+        testquery = """select feature1, feature2, feature3, feature4, feature5, feature6, feature7, feature8, feature9, feature10 from ml_auto_coding where entity_id="""+str(entity_id)+""" and header_id="""+"'"+str(header_id)+"'"
         print("test query: " + testquery)
         testdata = pd.read_sql(testquery,connection)
         testfeatures_final = pd.get_dummies(testdata)

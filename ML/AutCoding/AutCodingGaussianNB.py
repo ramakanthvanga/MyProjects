@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from sqlalchemy import create_engine
 from json import dumps
 from flask.ext.jsonpify import jsonify
@@ -13,11 +13,25 @@ import cx_Oracle
 app = Flask(__name__)
 api = Api(app)
 
+
+# Define parser and request args
+parser = reqparse.RequestParser()
+parser.add_argument('entity_id', type=int, required=True)
+parser.add_argument('header_id', type=int, required=True)
+parser.add_argument('vendor_id', type=str, required=False)
+
 class Features(Resource):
     def get(self):
-        
-        query = """select vendor_id as feature1, vendor_site_id as feature2, charge_account_id as final_value from inv_header h, inv_lines l where h.entity_id = l.entity_id
-        and h.header_id = l.inv_header_id and h.status in ('Imported to ERP', 'Fully Paid') and h.entity_id=2"""
+        args = parser.parse_args()
+        entity_id = args['entity_id']
+        header_id = args['header_id']
+        vendor_id = args['vendor_id']
+        print("entity id: " + str(args['entity_id']))
+        print("header id: " + str(args['header_id']))
+        query = """select feature1, feature2, final_value from ml_auto_coding where entity_id="""+str(entity_id)+""" and vendor_id="""+"'"+str(vendor_id)+"'"
+        print("query: " + query)
+        #query = """select vendor_id as feature1, vendor_site_id as feature2, charge_account_id as final_value from inv_header h, inv_lines l where h.entity_id = l.entity_id
+        #and h.header_id = l.inv_header_id and h.status in ('Imported to ERP', 'Fully Paid') and h.entity_id=2"""
         connection = cx_Oracle.connect("inspy_ap","fr3shSalt50","172.24.64.12:1521/devdb1.inspyrus.com")
         
         data = pd.read_sql(query,connection)
@@ -51,7 +65,8 @@ class Features(Resource):
         predictions = model.predict(X_test)
         accuracy_score(y_test, predictions)
         
-        testquery = """select 39179 as feature1, 8022 as feature2 from dual union select 39178 as feature1, 8022 as feature2 from dual"""
+        testquery = """select feature1, feature2 from ml_auto_coding where entity_id="""+str(entity_id)+""" and header_id="""+"'"+str(header_id)+"'"
+        print("test query: " + testquery)
         testdata = pd.read_sql(testquery,connection)
         testfeatures_final = pd.get_dummies(testdata)
         predictions = model.predict(testfeatures_final)
@@ -63,9 +78,9 @@ class Features(Resource):
          
         return jsonify(predictions2)
 
-
-
 api.add_resource(Features, '/features') 
 
 if __name__ == '__main__':
-     app.run(port=5002)
+  app.run(port=5002)
+
+print("Running application on port 5002")

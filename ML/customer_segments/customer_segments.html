@@ -13333,6 +13333,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong> Index 154 is an outlier for Delicatessen, Grocery and Milk. 65 is an Outlier for Fresh and Frozen. 128 is an outlier for Delicatessen and Frozen. 66 for Fresh and Delicatessen. 75 for Grocery and Detergents_Paper.</p>
+<p>Removing outliers is crucial as part of data preprocessing. It will skew the results which might lead to inconsistency. There are several methods used to identify an outlier, one of them is Tukey Method. According to this Method outliers are considered to be the samples which are (Q1 - IQR) or (Q3 + IQR)</p>
 
 </div>
 </div>
@@ -13426,7 +13427,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 <li>Variance in total by first and second principal component is 0.4430+0.2638=0.7068(70.68%)</li>
 <li>Variance for first four components is 0.4430+0.2638+0.1231+0.1012=0.9311(93.11%)</li>
 <li>Dimension 1: Fresh and Frozen have a slight positive variance. But detergents_paper followed by grocery and milk have a higher negative values. Retail stores could be a relevant example for this case.</li>
-<li>Dimension 2: All the values are negative so I am not sure how to make sense of this graph. Could they mean they all are equally important meaning it could be a restaurant?</li>
+<li>Dimension 2: Fresh followed by Frozen and Delicatessen are related in this cases. This could be a super market which also has a Deli place. Frozen food could be sold at super market.</li>
 <li>Dimension 3: Fresh feature is negative on this but Delicatessen and Detergents_paper is high. This could be a Deli place.</li>
 <li>Dimension 4: Frozen is positive but Delicatessen is negative. So this could be a mini super market or a gas station where they sell primarily frozen food but no fresh foods.</li>
 </ul>
@@ -13664,7 +13665,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a biplot</span>
@@ -13681,13 +13682,13 @@ Once you have performed this implementation, the dataset will be stored in the v
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[13]:</div>
+<div class="prompt output_prompt">Out[22]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x10b210eb8&gt;</pre>
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x10aefa3c8&gt;</pre>
 </div>
 
 </div>
@@ -13752,6 +13753,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 <ul>
 <li>K-Means clustering will divide the data into k-clusters. At every iteration it calculates the distance between sample and centroid and decides which cluster it belongs to. It will calculate the distance, re-position the centroid and move to next step. This gives few advantages like Low Running time, Easy to understand. On each iteration it definitely assigns a sample to a cluster. This is hard clustering</li>
 <li>GMM is similar to K-Means but it will consider the confidence % of a sample belonging to a cluster group. On every itereation it will re-calculate the probability % and assigns sample to cluster. This is soft clustering. This is slow but it works well with non-linear data.</li>
+<li>Since the dataset is small, I would like to go with GMM. GMM is definitely better than K-means but it is expensive as the probability % is accounted for on each iteration. However with a dataset of a small size we can go with GMM. The silhouette scores for GMM are better than K-means.</li>
 </ul>
 
 </div>
@@ -13779,7 +13781,7 @@ Once you have performed this implementation, the dataset will be stored in the v
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
@@ -13878,7 +13880,7 @@ K-Means:</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Display the results of the clustering from implementation</span>
@@ -13928,7 +13930,7 @@ K-Means:</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Inverse transform the centers</span>
@@ -14053,7 +14055,7 @@ K-Means:</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Display the predictions</span>
@@ -14091,6 +14093,13 @@ Sample point 2 predicted to be in Cluster 0
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong> I predicted Sample point 0 and 1 to be a super market and distributor whereas sample point 2 to be a coffee shop. My analysis on sample point 2 is correct and I was close with Samples 1 and 2.</p>
+<p>Milk and Grocery values for Sample point 0 and 1 are close to Segment 1 and for sample point 2 close to Segment 0. 
+For Sample point 2 Milk, Detergents_Paper and Delicatessen features are close to Segment 0 which could be the reason why it predicted to be in Cluster 0.</p>
+<p>Samples data from top:
+    Fresh   Milk    Grocery Frozen  Detergents_Paper    Delicatessen
+0   12669   9656    7561    214     2674                 1338
+1   11594   7779    12144   3252    8035                 3029
+2   3191    1993    1799    1730    234                  710</p>
 
 </div>
 </div>
@@ -14130,6 +14139,12 @@ Sample point 2 predicted to be in Cluster 0
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong> Cluster 0 customers might react positively if delivery service is changed from 5 to 3 days. Cluster 1 customers might react negatively as the fresh foods value is very high. Since fresh foods needs to be as fresh as possible, changing from 5 to 3 days might lead to a negative response.</p>
+<p>Distributor can do a A/B test by selecting random customers in each cluster. This could be a step:</p>
+<ol>
+<li>Change the delivery from  5 to 3 for random customers in each cluster.</li>
+<li>Do this for 2-3 weeks. Meet this customer and get a customer satisfaction. What is the impact for customers business because of the change in delivery. If customers don't complain distributor can consider changing it to all customers in a cluster.</li>
+</ol>
+<p>I am not sure how a customer would be okay with reducing the service and no alternation options provided to compensate like lower prices etc.</p>
 
 </div>
 </div>
